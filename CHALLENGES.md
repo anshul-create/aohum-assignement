@@ -23,6 +23,25 @@ The enrollment lifecycle supports cancellation and re-enrollment without creatin
 <img width="981" height="647" alt="Screenshot 2026-08-28 193528" src="https://github.com/user-attachments/assets/e3a33476-16b2-4156-867b-ca497ad51be0" />
 <img width="960" height="256" alt="Screenshot 2026-08-28 193535" src="https://github.com/user-attachments/assets/3d2c367a-3d4f-4147-9c9a-5a2beefedf4e" />
 
+### Challenge A — Enrollment Concurrency
+
+Event enrollment uses transactional row-level locking to prevent race conditions when multiple seekers attempt to enroll in a limited-capacity event simultaneously. The event row is locked during the capacity check and enrollment creation, ensuring that capacity cannot be exceeded.
+
+Created 5 concurrent users and tested Event capacity = 10, active enrollments = 9, must guarantee that active enrollments never exceed 10.
+
+<img width="1388" height="802" alt="image" src="https://github.com/user-attachments/assets/55099508-5faa-478b-acbd-e85eb9fdbf4b" />
+<img width="1385" height="793" alt="image" src="https://github.com/user-attachments/assets/83d07281-7163-4297-997e-6f32ec922357" />
+<img width="1343" height="817" alt="image" src="https://github.com/user-attachments/assets/42e4d83b-3b81-4fab-b759-9e1b678fe8bf" />
+<img width="1371" height="790" alt="image" src="https://github.com/user-attachments/assets/1d2eb199-732a-4e74-bf94-84760055be18" />
+<img width="1376" height="864" alt="image" src="https://github.com/user-attachments/assets/82f5d580-5bd6-499c-96d4-44563cc08603" />
+
+1 request → 201 Created (the one that got the last seat).
+4 requests → 400 Bad Request with:
+<img width="506" height="219" alt="image" src="https://github.com/user-attachments/assets/93da9f9f-5f67-409e-94c6-07650b56cf43" />
+
+KEY PART:
+The backend uses select_for_update() to lock the event row. The first request that acquires the lock creates the enrollment; all others are blocked until the transaction ends, at which point the event is full.
+
 
 
 
