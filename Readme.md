@@ -15,81 +15,49 @@ graph TD
 
     Enrollments -->|"select_for_update()"| EventDB
     Users -->|"Send OTP"| Email["Email Service"]
-```
 
 
-+-------------------------------------------------------------------+
-|                         CLIENT                                    |
-|               (Web / Mobile / Postman / cURL)                    |
-+----------------------------------+--------------------------------+
-                                   | HTTP (JWT in Authorization header)
-                                   ▼
-+-------------------------------------------------------------------+
-|                    DJANGO REST API (DRF + SimpleJWT)              |
-+----------------------------------+--------------------------------+
-|       USERS APP                  |      EVENTS APP                |
-|  ──────────────────────────────  |  ─────────────────────────────  |
-|  • Signup (no username)          |  • CRUD own events             |
-|  • OTP generation & sending      |  • Search / filter             |
-|  • OTP verification              |    (q, location, language,     |
-|  • Resend OTP (with cooldown)    |     starts_after/before)       |
-|  • Login (JWT access/refresh)    |  • Pagination                  |
-|  • Unverified user blocking      |  • Permissions:                |
-|                                  |    - IsFacilitator             |
-|                                  |    - IsEventCreator            |
-+----------------------------------+--------------------------------+
-                                   |
-                                   ▼
-+-------------------------------------------------------------------+
-|                   ENROLLMENTS APP                                 |
-|  ────────────────────────────────────────────────────────────────  |
-|  • Enroll (Challenge A – concurrency)                            |
-|    → select_for_update() inside atomic transaction               |
-|  • Cancel (soft delete → status='canceled')                     |
-|  • Re‑enroll (Challenge B – reactivates canceled record)        |
-|    → UniqueConstraint(event, seeker) WHERE status='enrolled'    |
-|  • My enrollments (filter by status/time)                       |
-+-------------------------------------------------------------------+
-                                   |
-                                   ▼
-+-------------------------------------------------------------------+
-|                DATABASE (PostgreSQL / SQLite)                    |
-|  ────────────────────────────────────────────────────────────────  |
-|  • UserProfile (role, email_verified)                           |
-|  • EmailOTP (otp_hash, expires_at, attempts, last_sent)        |
-|  • Event (title, description, location, starts_at, ends_at,    |
-|           capacity, created_by)                                 |
-|  • Enrollment (event, seeker, status, created_at, updated_at)  |
-|    → UniqueConstraint: (event, seeker) WHERE status='enrolled' |
-+-------------------------------------------------------------------+
+## ⚙️ Setup & Installation
 
+### 1. Clone the Repository
 
-## Setup & Installation
-
-# Clone the repository
+```bash
 git clone <repository-url>
 cd events_platform
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+2. Create and Activate a Virtual Environment
 
-# Install dependencies
+2.1) Windows (PowerShell):
+
+python -m venv venv
+venv\Scripts\activate```
+
+
+2.1) Linux / macOS:
+
+python3 -m venv venv
+source venv/bin/activate
+
+3. Install Dependencies
 pip install -r requirements.txt
 
-# Copy environment variables
+
+4. Configure Environment Variables
+
+Copy the example environment file:
+
+Windows (PowerShell):
+
+Copy-Item .env.example .env
+
+Linux / macOS:
+
 cp .env.example .env
 
-# Run migrations
+
+5. Run Database Migrations
+
 python manage.py migrate
-
-# Create a superuser (optional)
-python manage.py createsuperuser
-
-# Start the server
-python manage.py runserver
-
-
 
 ## Core API Endpoints
 
