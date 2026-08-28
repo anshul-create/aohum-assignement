@@ -15,7 +15,7 @@ graph TD
 
     Enrollments -->|"select_for_update()"| EventDB
     Users -->|"Send OTP"| Email["Email Service"]
-
+```
 
 ## ⚙️ Setup & Installation
 
