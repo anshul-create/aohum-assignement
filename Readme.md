@@ -61,6 +61,113 @@ cp .env.example .env
 ### Run Database Migrations
 python manage.py migrate
 ```
+## Tech Stack
+---
+
+### Backend Framework & Libraries
+
+| Component | Technology | Version | Purpose |
+|-----------|------------|---------|---------|
+| **Web Framework** | Django | 5.1.2 | Core web framework |
+| **API Framework** | Django REST Framework | 3.15.2 | RESTful API endpoints |
+| **Authentication** | djangorestframework-simplejwt | 5.3.1 | JWT authentication (access + refresh tokens) |
+| **Database** | PostgreSQL (preferred) / SQLite (dev) | - | Data persistence; PostgreSQL recommended for production |
+| **Email Backend** | Django Console Email | - | OTP delivery (development); production-ready providers can be swapped |
+
+---
+
+### Database & Hashing
+
+| Component | Technology | Details |
+|-----------|------------|---------|
+| **ORM** | Django ORM | Built-in object-relational mapping |
+| **Migrations** | Django Migrations | Version-controlled schema changes |
+| **OTP Hashing** | Django `make_password()` | Uses **PBKDF2** with SHA-256 (default Django hasher) |
+| **Password Hashing** | Django `make_password()` | Same PBKDF2+SHA-256 with 600,000 iterations (Django 5.1 default) |
+| **Unique Constraint** | `UniqueConstraint` with `condition` | Partial unique index for re‑enrollment (PostgreSQL only) |
+
+**OTP Storage:**  
+- OTPs are **never stored in plaintext**.  
+- Django’s `make_password()` hashes each OTP before saving to the database.  
+- The hash includes a **salt** and uses the **PBKDF2** algorithm (default).  
+- Plaintext OTPs only exist transiently in memory while being emailed; they are never logged or returned in API responses.
+
+---
+
+### Development & Testing
+
+| Tool | Purpose |
+|------|---------|
+| **Python** 3.9+ | Runtime |
+| **pip** | Package management |
+| **venv** | Virtual environment |
+| **Django Test Runner** | Automated testing |
+| **unittest.mock** | Mocking email in tests |
+| **Threading (Python)** | Concurrency simulation (Challenge A) |
+
+---
+
+### API & Communication
+
+| Component | Technology |
+|-----------|------------|
+| **Authentication** | JWT (Bearer tokens) |
+| **Serialization** | DRF Serializers |
+| **Pagination** | DRF `PageNumberPagination` |
+| **Permissions** | Custom DRF permission classes |
+| **Error Format** | `{"detail": "...", "code": "..."}` |
+
+---
+
+### Deployment (Optional / Bonus)
+
+| Component | Technology |
+|-----------|------------|
+| **Containerization** | Docker (bonus, not required) |
+| **WSGI Server** | Gunicorn (for production) |
+| **Web Server** | Nginx (recommended for production) |
+
+---
+
+### Security Measures
+
+| Area | Implementation |
+|------|----------------|
+| **OTP Storage** | Hashed with PBKDF2 + salt (Django `make_password`) |
+| **OTP Transmission** | Console email (dev), never in response body |
+| **Authentication** | JWT with short‑lived access tokens (15 min) + refresh tokens |
+| **Concurrency** | `select_for_update()` + `transaction.atomic()` |
+| **Re‑enrollment** | Conditional unique constraint prevents duplicates |
+| **Rate Limiting** | 30‑second cooldown on OTP resend |
+| **Brute‑Force** | Max 5 OTP attempts before lockout |
+
+---
+
+### Summary of Key Libraries
+
+```
+# requirements.txt
+Django==5.1.2
+djangorestframework==3.15.2
+djangorestframework-simplejwt==5.3.1
+psycopg2-binary==2.9.9   # PostgreSQL adapter (if using PostgreSQL)
+python-dotenv==1.0.1     # Environment variables
+```
+
+---
+
+### Notes on Database Choice
+
+- **PostgreSQL** is **preferred** for production because:
+  - `select_for_update()` works reliably.
+  - Conditional unique constraints (`UniqueConstraint` with `condition`) are fully supported.
+  - Better performance with large datasets.
+- **SQLite** is used in development for simplicity, but:
+  - `select_for_update()` is ignored.
+  - Conditional constraints fall back to application‑level enforcement (which is still correct but not as robust).
+
+---
+
 
 
 ## Core API Endpoints
