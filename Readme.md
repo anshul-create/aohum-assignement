@@ -26,7 +26,7 @@ git clone <repository-url>
 cd events_platform
 ```
 
-### Create and Activate a Virtual Environment
+### 2.  Create and Activate a Virtual Environment
 
 2.1) Windows (PowerShell):
 
@@ -40,25 +40,25 @@ venv\Scripts\activate
 python3 -m venv venv
 source venv/bin/activate
 ```
-
+```bash
 ### Install Dependencies
 pip install -r requirements.txt
-
-
+```
+```bash
 ### Configure Environment Variables
 Copy the example environment file:
-
+```
+```bash
 ### Windows (PowerShell):
 Copy-Item .env.example .env
+```
 
 ```bash
 ### Linux / macOS:
-
 cp .env.example .env
 ```
-
-### Run Database Migrations
 ```bash
+### Run Database Migrations
 python manage.py migrate
 ```
 ```
