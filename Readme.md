@@ -32,32 +32,50 @@ graph TD
 ```
 
 
-┌─────────────────────────────────────────────────────────────────────┐
-│                         CLIENT (Web / Mobile / Postman)             │
-└─────────────────────────────────┬───────────────────────────────────┘
-                                  │ HTTP / HTTPS (JWT in Authorization header)
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                        DJANGO REST API (DRF + SimpleJWT)            │
-├───────────────────┬───────────────────┬────────────────────────────┤
-│   USERS APP       │   EVENTS APP      │   ENROLLMENTS APP          │
-│                   │                   │                            │
-│ • Signup          │ • CRUD own        │ • Enroll (Challenge A)     │
-│ • OTP verify      │   events          │ • Cancel (Challenge B)     │
-│ • Resend (C)      │ • Search/filter   │ • Re‑enroll (Challenge B)  │
-│ • Login           │ • Pagination      │ • My enrollments           │
-│ • JWT tokens      │ • Permissions     │ • Concurrency protection   │
-└───────────────────┴───────────────────┴────────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                DATABASE (PostgreSQL / SQLite)                       │
-│  • UserProfile (role, email_verified)                               │
-│  • EmailOTP (hashed, expires, attempts, last_sent)                  │
-│  • Event (title, description, location, starts/ends, capacity)      │
-│  • Enrollment (event, seeker, status)                               │
-│    → UniqueConstraint: (event, seeker) WHERE status='enrolled'      │
-└─────────────────────────────────────────────────────────────────────┘
++-------------------------------------------------------------------+
+|                         CLIENT                                    |
+|               (Web / Mobile / Postman / cURL)                    |
++----------------------------------+--------------------------------+
+                                   | HTTP (JWT in Authorization header)
+                                   ▼
++-------------------------------------------------------------------+
+|                    DJANGO REST API (DRF + SimpleJWT)              |
++----------------------------------+--------------------------------+
+|       USERS APP                  |      EVENTS APP                |
+|  ──────────────────────────────  |  ─────────────────────────────  |
+|  • Signup (no username)          |  • CRUD own events             |
+|  • OTP generation & sending      |  • Search / filter             |
+|  • OTP verification              |    (q, location, language,     |
+|  • Resend OTP (with cooldown)    |     starts_after/before)       |
+|  • Login (JWT access/refresh)    |  • Pagination                  |
+|  • Unverified user blocking      |  • Permissions:                |
+|                                  |    - IsFacilitator             |
+|                                  |    - IsEventCreator            |
++----------------------------------+--------------------------------+
+                                   |
+                                   ▼
++-------------------------------------------------------------------+
+|                   ENROLLMENTS APP                                 |
+|  ────────────────────────────────────────────────────────────────  |
+|  • Enroll (Challenge A – concurrency)                            |
+|    → select_for_update() inside atomic transaction               |
+|  • Cancel (soft delete → status='canceled')                     |
+|  • Re‑enroll (Challenge B – reactivates canceled record)        |
+|    → UniqueConstraint(event, seeker) WHERE status='enrolled'    |
+|  • My enrollments (filter by status/time)                       |
++-------------------------------------------------------------------+
+                                   |
+                                   ▼
++-------------------------------------------------------------------+
+|                DATABASE (PostgreSQL / SQLite)                    |
+|  ────────────────────────────────────────────────────────────────  |
+|  • UserProfile (role, email_verified)                           |
+|  • EmailOTP (otp_hash, expires_at, attempts, last_sent)        |
+|  • Event (title, description, location, starts_at, ends_at,    |
+|           capacity, created_by)                                 |
+|  • Enrollment (event, seeker, status, created_at, updated_at)  |
+|    → UniqueConstraint: (event, seeker) WHERE status='enrolled' |
++-------------------------------------------------------------------+
 
 
 ## Setup & Installation
