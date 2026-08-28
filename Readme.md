@@ -30,35 +30,37 @@ cd events_platform
 
 2.1) Windows (PowerShell):
 
+```bash
 python -m venv venv
 venv\Scripts\activate
-
-
+```
+```bash
 2.1) Linux / macOS:
 
 python3 -m venv venv
 source venv/bin/activate
+```
 
 ### Install Dependencies
 pip install -r requirements.txt
 
 
 ### Configure Environment Variables
-
 Copy the example environment file:
 
 ### Windows (PowerShell):
-
 Copy-Item .env.example .env
 
+```bash
 ### Linux / macOS:
 
 cp .env.example .env
-
+```
 
 ### Run Database Migrations
-
+```bash
 python manage.py migrate
+```
 ```
 
 ## Core API Endpoints
