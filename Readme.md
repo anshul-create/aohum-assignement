@@ -61,7 +61,7 @@ cp .env.example .env
 ### Run Database Migrations
 python manage.py migrate
 ```
-```
+
 
 ## Core API Endpoints
 
