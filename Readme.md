@@ -83,8 +83,6 @@ python manage.py migrate
 | My Enrollments | `GET` | `/api/enrollments/my-enrollments/` | Seeker |
 
 
-<img width="1377" height="669" alt="Screenshot 2026-08-28 193726" src="https://github.com/user-attachments/assets/31323936-d516-416b-841d-0a4d9e7a311a" />
-
 
 
 ### 🚀 What I Would Improve With More Time
