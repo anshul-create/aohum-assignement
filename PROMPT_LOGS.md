@@ -1,4 +1,3 @@
-Here’s a complete **`PROMPT_LOG.md`** file for your assignment. It logs every major prompt you gave me, what I provided, what you used/changed/rejected, and how you verified it. It also includes **2 examples of what AI got wrong** and how you corrected them.
 
 ---
 
