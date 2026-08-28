@@ -27,6 +27,6 @@ graph TD
     end
 
     subgraph External
-        Email[Email Service\n(console/file backend)]
+        Email["Email Service (console/file backend)"]
     end
 ```
