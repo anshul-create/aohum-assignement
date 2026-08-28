@@ -30,7 +30,7 @@ cd events_platform
 2.1) Windows (PowerShell):
 
 python -m venv venv
-venv\Scripts\activate```
+venv\Scripts\activate
 
 
 2.1) Linux / macOS:
@@ -58,6 +58,7 @@ cp .env.example .env
 5. Run Database Migrations
 
 python manage.py migrate
+```
 
 ## Core API Endpoints
 
