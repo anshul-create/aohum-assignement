@@ -24,8 +24,9 @@ graph TD
 ```bash
 git clone <repository-url>
 cd events_platform
+```
 
-2. Create and Activate a Virtual Environment
+### Create and Activate a Virtual Environment
 
 2.1) Windows (PowerShell):
 
@@ -38,24 +39,24 @@ venv\Scripts\activate
 python3 -m venv venv
 source venv/bin/activate
 
-3. Install Dependencies
+### Install Dependencies
 pip install -r requirements.txt
 
 
-4. Configure Environment Variables
+### Configure Environment Variables
 
 Copy the example environment file:
 
-Windows (PowerShell):
+### Windows (PowerShell):
 
 Copy-Item .env.example .env
 
-Linux / macOS:
+### Linux / macOS:
 
 cp .env.example .env
 
 
-5. Run Database Migrations
+### Run Database Migrations
 
 python manage.py migrate
 ```
@@ -80,7 +81,7 @@ python manage.py migrate
 | My Enrollments | `GET` | `/api/enrollments/my-enrollments/` | Seeker |
 
 
-🚀 What I Would Improve With More Time
+### 🚀 What I Would Improve With More Time
 1) Full-Text Search — Use PostgreSQL SearchVector for faster and more relevant event discovery.
 2) Redis Integration — Add caching for frequently accessed event listings and implement distributed rate limiting.
 3) Production Email Delivery — Replace the development email backend with a provider such as SendGrid or AWS SES.
