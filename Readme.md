@@ -1,34 +1,20 @@
 ```mermaid
 graph TD
-    Client[Client / API Consumer] -->|HTTP Requests| API[Django REST API]
+    Client["Client<br/>Web / Mobile / Postman"]
+    API["Django REST API"]
 
-    subgraph "Django Application"
-        API --> Auth[Authentication & JWT]
-        API --> Users[Users App]
-        API --> Events[Events App]
-        API --> Enrollments[Enrollments App]
+    Client -->|"HTTP / HTTPS"| API
 
-        Auth -->|Signup / Login / Refresh| Users
-        Auth -->|Verify JWT| Events
-        Auth -->|Verify JWT| Enrollments
+    API --> Users["Users App"]
+    API --> Events["Events App"]
+    API --> Enrollments["Enrollments App"]
 
-        Users -->|Create / Verify OTP| UserDB[(UserProfile, EmailOTP)]
-        Users -->|Send email| Email
+    Users --> UserDB[("User / UserProfile / EmailOTP")]
+    Events --> EventDB[("Event")]
+    Enrollments --> EnrollmentDB[("Enrollment")]
 
-        Events -->|CRUD + Search| EventDB[(Event)]
-        Events -->|My Events| EventDB
-        Events -->|Enrollment counts| Enrollments
-
-        Enrollments -->|Enroll / Cancel / List| EnrollmentDB[(Enrollment)]
-        Enrollments -->|Lock event row| EventDB
-        Enrollments -->|UniqueConstraint| EnrollmentDB
-
-        EventDB -->|Capacity check| Enrollments
-    end
-
-    subgraph External
-        Email["Email Service (console/file backend)"]
-    end
+    Enrollments -->|"select_for_update()"| EventDB
+    Users -->|"Send OTP"| Email["Email Service"]
 ```
 
 
