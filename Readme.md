@@ -167,7 +167,7 @@ python-dotenv==1.0.1     # Environment variables
   - Conditional constraints fall back to application‑level enforcement (which is still correct but not as robust).
 
 ---
-```
+
 
 
 ## Core API Endpoints
