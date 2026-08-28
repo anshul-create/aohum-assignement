@@ -1,3 +1,4 @@
+```mermaid
 graph TD
     Client[Client / API Consumer] -->|HTTP Requests| API[Django REST API]
 
@@ -41,3 +42,4 @@ graph TD
     classDef external fill:#bfb,stroke:#333,stroke-width:2px;
     class UserDB,EventDB,EnrollmentDB db;
     class Email external;
+```
