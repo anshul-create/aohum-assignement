@@ -83,6 +83,8 @@ python manage.py migrate
 | My Enrollments | `GET` | `/api/enrollments/my-enrollments/` | Seeker |
 
 
+
+
 ### 🚀 What I Would Improve With More Time
 1) Full-Text Search — Use PostgreSQL SearchVector for faster and more relevant event discovery.
 2) Redis Integration — Add caching for frequently accessed event listings and implement distributed rate limiting.
